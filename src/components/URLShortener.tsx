@@ -8,6 +8,13 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { Link, Clock } from "lucide-react";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -17,6 +24,7 @@ import { cn } from "@/lib/utils";
 const URLShortener = () => {
   const [url, setUrl] = useState("");
   const [expirationDate, setExpirationDate] = useState<Date>();
+  const [expirationTime, setExpirationTime] = useState("12:00");
   const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +71,21 @@ const URLShortener = () => {
     });
   };
 
+  // Generate time options every 30 minutes
+  const timeOptions = Array.from({ length: 48 }, (_, i) => {
+    const hour = Math.floor(i / 2);
+    const minute = (i % 2) * 30;
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  });
+
+  const formatDateTime = (date?: Date, time = "00:00") => {
+    if (!date) return "Pick a date and time";
+    const [hours, minutes] = time.split(":");
+    const dateWithTime = new Date(date);
+    dateWithTime.setHours(parseInt(hours), parseInt(minutes));
+    return format(dateWithTime, "PPP 'at' HH:mm");
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
       <div className="w-full max-w-md space-y-8">
@@ -88,30 +111,54 @@ const URLShortener = () => {
 
           <div className="space-y-2">
             <Label>Expiration (Optional)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !expirationDate && "text-muted-foreground"
-                  )}
-                >
-                  <Clock className="mr-2 h-4 w-4" />
-                  {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={expirationDate}
-                  onSelect={setExpirationDate}
-                  initialFocus
-                  disabled={(date) => date < new Date()}
-                  className={cn("p-3 pointer-events-auto")}
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="flex gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !expirationDate && "text-muted-foreground"
+                    )}
+                  >
+                    <Clock className="mr-2 h-4 w-4" />
+                    {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={expirationDate}
+                    onSelect={setExpirationDate}
+                    initialFocus
+                    disabled={(date) => date < new Date()}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Select
+                value={expirationTime}
+                onValueChange={setExpirationTime}
+                disabled={!expirationDate}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Select time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeOptions.map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {expirationDate && (
+              <p className="text-sm text-muted-foreground">
+                Expires: {formatDateTime(expirationDate, expirationTime)}
+              </p>
+            )}
           </div>
 
           <Button 
