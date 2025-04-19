@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { Link, Clock } from "lucide-react";
+import { Link, Clock, Info } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -83,7 +82,7 @@ const URLShortener = () => {
     const [hours, minutes] = time.split(":");
     const dateWithTime = new Date(date);
     dateWithTime.setHours(parseInt(hours), parseInt(minutes));
-    return format(dateWithTime, "PPP 'at' HH:mm");
+    return format(dateWithTime, "PPP 'at' HH:mm") + " UTC";
   };
 
   return (
@@ -155,9 +154,24 @@ const URLShortener = () => {
               </Select>
             </div>
             {expirationDate && (
-              <p className="text-sm text-muted-foreground">
-                Expires: {formatDateTime(expirationDate, expirationTime)}
-              </p>
+              <div className="flex items-center space-x-2">
+                <p className="text-sm text-muted-foreground">
+                  Expires: {formatDateTime(expirationDate, expirationTime)}
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64">
+                    <p className="text-sm">
+                      All expiration times are in Coordinated Universal Time (UTC). 
+                      Please convert to your local time zone as needed.
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              </div>
             )}
           </div>
 
