@@ -1,0 +1,150 @@
+
+import React, { useState } from 'react';
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { Link, Clock } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+
+const URLShortener = () => {
+  const [url, setUrl] = useState("");
+  const [expirationDate, setExpirationDate] = useState<Date>();
+  const [shortUrl, setShortUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!url) {
+      toast({
+        title: "Error",
+        description: "Please enter a URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Simulating API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generate a random short code (in real app, this would come from backend)
+      const shortCode = Math.random().toString(36).substring(2, 8);
+      setShortUrl(`https://short.url/${shortCode}`);
+      
+      toast({
+        title: "Success!",
+        description: "Your URL has been shortened",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to shorten URL",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shortUrl);
+    toast({
+      description: "Copied to clipboard!",
+    });
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">URL Shortener</h1>
+          <p className="text-gray-600">Shorten your long URLs with ease</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="url">Enter your long URL</Label>
+            <div className="flex">
+              <Input
+                id="url"
+                type="url"
+                placeholder="https://example.com/very-long-url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="flex-1"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Expiration (Optional)</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !expirationDate && "text-muted-foreground"
+                  )}
+                >
+                  <Clock className="mr-2 h-4 w-4" />
+                  {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={expirationDate}
+                  onSelect={setExpirationDate}
+                  initialFocus
+                  disabled={(date) => date < new Date()}
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full bg-purple-600 hover:bg-purple-700"
+            disabled={loading}
+          >
+            {loading ? "Shortening..." : "Shorten URL"}
+          </Button>
+        </form>
+
+        {shortUrl && (
+          <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <Label>Your shortened URL</Label>
+            <div className="flex mt-2">
+              <Input
+                value={shortUrl}
+                readOnly
+                className="flex-1"
+              />
+              <Button
+                onClick={copyToClipboard}
+                variant="outline"
+                className="ml-2"
+              >
+                Copy
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default URLShortener;
