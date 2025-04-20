@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+
+const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
+
+
 const URLShortener = () => {
   const [url, setUrl] = useState("");
   const [expirationDate, setExpirationDate] = useState<Date>();
@@ -43,7 +47,7 @@ const URLShortener = () => {
       setLoading(true);
 
       const longUrl = encodeURIComponent("https://example.com");
-      await fetch(`/api?long_url=${longUrl}`, {
+      await fetch(`${API_GATEWAY}?long_url=${longUrl}`, {
         method: "POST"
       })
         .then(res => res.json())
@@ -81,7 +85,7 @@ const URLShortener = () => {
 
   const handleTest = async () => {
     try {
-      const response = await fetch('/api', {
+      const response = await fetch(`${API_GATEWAY}`, {
         method: 'OPTIONS'
       });
       console.log('OPTIONS response:', response);
