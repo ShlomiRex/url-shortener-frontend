@@ -41,8 +41,17 @@ const URLShortener = () => {
 
     try {
       setLoading(true);
+
+      const longUrl = encodeURIComponent("https://example.com");
+      await fetch(`/api?long_url=${longUrl}`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Response:", data);
+      });
       // Simulating API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Generate a random short code (in real app, this would come from backend)
       const shortCode = Math.random().toString(36).substring(2, 8);
