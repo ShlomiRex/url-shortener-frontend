@@ -44,7 +44,7 @@ const URLShortener = () => {
 
       const longUrl = encodeURIComponent("https://example.com");
       await fetch(`/api?long_url=${longUrl}`, {
-        method: "GET"
+        method: "POST"
       })
         .then(res => res.json())
         .then(data => {
