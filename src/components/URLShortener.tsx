@@ -46,7 +46,7 @@ const URLShortener = () => {
     try {
       setLoading(true);
 
-      const longUrl = encodeURIComponent("https://example.com");
+      const longUrl = encodeURIComponent(url);
       await fetch(`${API_GATEWAY}?long_url=${longUrl}`, {
         method: "POST"
       })
