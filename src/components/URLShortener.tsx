@@ -4,8 +4,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
-import { Link, Clock, Info } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { Link, Clock, Info, TestTube } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -79,7 +79,26 @@ const URLShortener = () => {
     });
   };
 
-  // Generate time options every 30 minutes
+  const handleTest = async () => {
+    try {
+      const response = await fetch('/api', {
+        method: 'OPTIONS'
+      });
+      console.log('OPTIONS response:', response);
+      toast({
+        title: "Test Request Sent",
+        description: `Status: ${response.status} ${response.statusText}`,
+      });
+    } catch (error) {
+      console.error('Test request failed:', error);
+      toast({
+        title: "Test Failed",
+        description: "Failed to send OPTIONS request",
+        variant: "destructive",
+      });
+    }
+  };
+
   const timeOptions = Array.from({ length: 48 }, (_, i) => {
     const hour = Math.floor(i / 2);
     const minute = (i % 2) * 30;
@@ -184,13 +203,24 @@ const URLShortener = () => {
             )}
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full bg-purple-600 hover:bg-purple-700"
-            disabled={loading}
-          >
-            {loading ? "Shortening..." : "Shorten URL"}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              type="submit" 
+              className="flex-1 bg-purple-600 hover:bg-purple-700"
+              disabled={loading}
+            >
+              {loading ? "Shortening..." : "Shorten URL"}
+            </Button>
+            
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleTest}
+              className="px-4"
+            >
+              <TestTube className="w-4 h-4" />
+            </Button>
+          </div>
         </form>
 
         {shortUrl && (
