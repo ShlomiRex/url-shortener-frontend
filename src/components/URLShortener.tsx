@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useEffect } from "react";
 
 const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
 const DOMAIN = "http://tinyurl.shlomidom.com"
@@ -92,6 +93,7 @@ const URLShortener = () => {
   };
 
   const handleRedirect = async () => {
+    console.log("Handling redirection...");
     const params = new URLSearchParams(window.location.search);
     const shortCode = params.get("u");
 
@@ -139,7 +141,10 @@ const URLShortener = () => {
     }
   }
 
-  handleRedirect();
+  // Use effect because its called twice when the page loads
+  useEffect(() => {
+    handleRedirect();
+  }, []);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl);
