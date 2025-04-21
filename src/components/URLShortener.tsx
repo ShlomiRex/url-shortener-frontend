@@ -317,27 +317,25 @@ const URLShortener = () => {
       {/* Creator Information */}
       <div className="mt-8 text-center text-gray-600">
         <p className="text-sm">
-          Created by <span className="font-semibold">Shlomi Domnenco</span>
-        </p>
-        <p className="text-sm mb-2">Check out my professional portfolio</p>
-        <div className="flex justify-center space-x-2">
+          Created by <span className="font-semibold">Shlomi Domnenco</span>{' '}
           <a 
             href="mailto:shlomidom@gmail.com" 
-            className="hover:text-primary transition-colors"
+            className="inline-block hover:text-primary transition-colors"
           >
-            <span className="sr-only">Email</span>
-            <Mail className="h-5 w-5" />
+            <Mail className="h-4 w-4 inline-block ml-1" />
           </a>
+        </p>
+        <p className="text-sm mb-2">
+          Check out my professional portfolio{' '}
           <a 
             href="https://shlomidom.com" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="hover:text-primary transition-colors"
+            className="inline-block hover:text-primary transition-colors"
           >
-            <span className="sr-only">Portfolio</span>
-            <Link className="h-5 w-5" />
+            <Link className="h-4 w-4 inline-block ml-1" />
           </a>
-        </div>
+        </p>
       </div>
     </div>
   );
