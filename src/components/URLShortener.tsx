@@ -28,7 +28,7 @@ import {
 import { useEffect } from "react";
 
 const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
-const DOMAIN = "http://tinyurl.shlomidom.com"
+const DOMAIN = "https://tinyurl.shlomidom.com"
 
 const URLShortener = () => {
   const [url, setUrl] = useState("");
