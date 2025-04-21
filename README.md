@@ -6,6 +6,8 @@ Install dependencies: `npm install`. Run: `npm run dev`. Deploy to S3: `npm run 
 
 ![URL Shortener](README-assets/animation.gif)
 
+![Diagram](README-assets/diagram.svg)
+
 - [URL Shortener Frontend](#url-shortener-frontend)
   - [Frontend](#frontend)
   - [Database](#database)
