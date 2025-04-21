@@ -19,7 +19,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
 const DOMAIN = "http://tinyurl.shlomidom.com"
@@ -30,6 +35,7 @@ const URLShortener = () => {
   const [expirationTime, setExpirationTime] = useState("12:00");
   const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,14 +55,10 @@ const URLShortener = () => {
       const longUrl = encodeURIComponent(url);
       var requestUri = `${API_GATEWAY}?long_url=${longUrl}`;
 
-      // Check expiration selected
       if (expirationDate) {
         const expirationDateTime = new Date(expirationDate);
         expirationDateTime.setHours(parseInt(expirationTime.split(":")[0]), parseInt(expirationTime.split(":")[1]));
         const expirationTimestamp = Math.floor(expirationDateTime.getTime() / 1000);
-        // Send expiration timestamp to the API if needed
-        console.log("Expiration Timestamp:", expirationTimestamp, "Expiration date:", new Date(expirationTimestamp * 1000));
-
         requestUri += `&expiration=${expirationTimestamp}`;
       } else {
         console.log("No expiration date selected");
@@ -89,16 +91,13 @@ const URLShortener = () => {
     }
   };
 
-  // Handles tinyurl.shlomidom.com/?u=short_code
   const handleRedirect = async () => {
-    // Check if the URL contains a query parameter "u"
     const params = new URLSearchParams(window.location.search);
     const shortCode = params.get("u");
 
     if (shortCode) {
       console.log("Short code found:", shortCode);
 
-      // If "u" is present, redirect to the corresponding long URL
       await fetch(`${API_GATEWAY}?short_url=${shortCode}`, {
         method: "GET"
       })
@@ -106,7 +105,6 @@ const URLShortener = () => {
         .then(data => {
           console.log("Response:", data);
 
-          // Check expiration
           if (data.statusCode == 400 && data.message == "URL expired") {
             toast({
               title: "Error",
@@ -120,7 +118,10 @@ const URLShortener = () => {
           const longUrl = data.long_url;
           if (longUrl) {
             console.log("API returned long URL:", longUrl);
-            window.location.href = longUrl; // Redirect to the long URL
+            setIsRedirecting(true);
+            setTimeout(() => {
+              window.location.href = longUrl;
+            }, 1000);
           } else {
             console.log("No long URL found for the short code.");
           }
@@ -132,14 +133,13 @@ const URLShortener = () => {
             description: "Failed to fetch long URL",
             variant: "destructive",
           });
-        }
-      );
+        });
     } else {
       console.log("No short code found in the URL.");
     }
   }
 
-  handleRedirect(); // Call the function to handle the error page
+  handleRedirect();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl);
@@ -293,6 +293,14 @@ const URLShortener = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={isRedirecting} modal>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Redirecting...</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
