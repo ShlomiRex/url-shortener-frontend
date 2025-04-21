@@ -121,7 +121,7 @@ const URLShortener = () => {
             setIsRedirecting(true);
             setTimeout(() => {
               window.location.href = longUrl;
-            }, 1000);
+            }, 2000);
           } else {
             console.log("No long URL found for the short code.");
           }
