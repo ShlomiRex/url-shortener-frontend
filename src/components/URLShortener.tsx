@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Link, Clock, Info, TestTube } from "lucide-react";
+import { Link, Clock, Info, TestTube, Mail } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -141,7 +141,6 @@ const URLShortener = () => {
     }
   }
 
-  // Use effect because its called twice when the page loads
   useEffect(() => {
     handleRedirect();
   }, []);
@@ -306,6 +305,31 @@ const URLShortener = () => {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+
+      {/* Creator Information */}
+      <div className="mt-8 text-center text-gray-600">
+        <p className="text-sm">
+          Created by <span className="font-semibold">Shlomi Domnenco</span>
+        </p>
+        <div className="flex justify-center space-x-2 mt-2">
+          <a 
+            href="mailto:shlomidom@gmail.com" 
+            className="hover:text-primary transition-colors"
+          >
+            <span className="sr-only">Email</span>
+            <Mail className="h-5 w-5" />
+          </a>
+          <a 
+            href="https://shlomidom.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-primary transition-colors"
+          >
+            <span className="sr-only">Website</span>
+            <Link className="h-5 w-5" />
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
