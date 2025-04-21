@@ -134,7 +134,7 @@ The site is stored in an S3 bucket.
 
 ![Tinyurl Bucket](README-assets/s3.png)
 
-I upload my site using the command `npm run deploy`, which builds the site (`npm run build`) and uploads it to the S3 bucket (`npm run build && aws s3 sync ./dist s3://tinyurl.shlomidom.com --delete`). The bucket is configured to be publicly accessible and to serve static files. The upload is only possible for me, because you need to configure AWS CLI with account ID and account key, which only I have.
+I upload my site using the command `npm run deploy`, which builds the site (`npm run build`) and uploads it to the S3 bucket (`aws s3 sync ./dist s3://tinyurl.shlomidom.com --delete`). The bucket is configured to be publicly accessible and to serve static files. The upload is only possible for me, because you need to configure AWS CLI with account ID and account key, which only I have.
 
 ## API Gateway
 
@@ -148,7 +148,7 @@ I use AWS CloudWatch to monitor the Lambda functions and API Gateway. I can see 
 
 I have 4 log groups, three for each of the lambda functions (the OPTIONS lambda function is not used, only for testing):
 
-![CloudWatch Group Logs](README-assets/lkog_groups.png)
+![CloudWatch Group Logs](README-assets/log_groups.png)
 
 Example log from `shorten_GET` lambda function:
 
@@ -160,7 +160,7 @@ In order to prevent high costs from AWS, I added throttling to the API Gateway. 
 
 ![API Gateway Throttling](README-assets/throttling.png)
 
-In order to this test, I ran a simple python script that sends 100 requests to the API Gateway and we check how many requests are successful and how many are throttled.
+In order to test this, I ran a simple python script that sends 100 requests to the API Gateway and we check how many requests are successful and how many are throttled.
 
 ```python
 import requests
