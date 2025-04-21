@@ -168,9 +168,10 @@ const URLShortener = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background to-muted transition-colors duration-500">
-      <div className="fixed top-4 right-4">
+      {/* TODO: Add in the future */}
+      {/* <div className="fixed top-4 right-4">
         <ThemeToggle />
-      </div>
+      </div> */}
 
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
