@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 
 const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
-
+const DOMAIN = "http://tinyurl.shlomidom.com"
 
 const URLShortener = () => {
   const [url, setUrl] = useState("");
@@ -33,7 +33,7 @@ const URLShortener = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!url) {
       toast({
         title: "Error",
@@ -47,24 +47,37 @@ const URLShortener = () => {
       setLoading(true);
 
       const longUrl = encodeURIComponent(url);
-      await fetch(`${API_GATEWAY}?long_url=${longUrl}`, {
+      var requestUri = `${API_GATEWAY}?long_url=${longUrl}`;
+
+      // Check expiration selected
+      if (expirationDate) {
+        const expirationDateTime = new Date(expirationDate);
+        expirationDateTime.setHours(parseInt(expirationTime.split(":")[0]), parseInt(expirationTime.split(":")[1]));
+        const expirationTimestamp = Math.floor(expirationDateTime.getTime() / 1000);
+        // Send expiration timestamp to the API if needed
+        console.log("Expiration Timestamp:", expirationTimestamp, "Expiration date:", new Date(expirationTimestamp * 1000));
+
+        requestUri += `&expiration=${expirationTimestamp}`;
+      } else {
+        console.log("No expiration date selected");
+      }
+
+      var short_url = null;
+      await fetch(requestUri, {
         method: "POST"
       })
         .then(res => res.json())
         .then(data => {
           console.log("Response:", data);
-      });
-      // Simulating API call with timeout
-      // await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Generate a random short code (in real app, this would come from backend)
-      const shortCode = Math.random().toString(36).substring(2, 8);
-      setShortUrl(`https://short.url/${shortCode}`);
-      
-      toast({
-        title: "Success!",
-        description: "Your URL has been shortened",
-      });
+          short_url = data.short_url;
+
+          setShortUrl(`${DOMAIN}/?u=${short_url}`);
+
+          toast({
+            title: "Success!",
+            description: "Your URL has been shortened",
+          });
+        });
     } catch (error) {
       toast({
         title: "Error",
@@ -76,31 +89,63 @@ const URLShortener = () => {
     }
   };
 
+  // Handles tinyurl.shlomidom.com/?u=short_code
+  const handleRedirect = async () => {
+    // Check if the URL contains a query parameter "u"
+    const params = new URLSearchParams(window.location.search);
+    const shortCode = params.get("u");
+
+    if (shortCode) {
+      console.log("Short code found:", shortCode);
+
+      // If "u" is present, redirect to the corresponding long URL
+      await fetch(`${API_GATEWAY}?short_url=${shortCode}`, {
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Response:", data);
+
+          // Check expiration
+          if (data.statusCode == 400 && data.message == "URL expired") {
+            toast({
+              title: "Error",
+              description: "URL expired",
+              variant: "destructive",
+              duration: 5000,
+            });
+            return;
+          }
+
+          const longUrl = data.long_url;
+          if (longUrl) {
+            console.log("API returned long URL:", longUrl);
+            window.location.href = longUrl; // Redirect to the long URL
+          } else {
+            console.log("No long URL found for the short code.");
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching long URL:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch long URL",
+            variant: "destructive",
+          });
+        }
+      );
+    } else {
+      console.log("No short code found in the URL.");
+    }
+  }
+
+  handleRedirect(); // Call the function to handle the error page
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shortUrl);
     toast({
       description: "Copied to clipboard!",
     });
-  };
-
-  const handleTest = async () => {
-    try {
-      const response = await fetch(`${API_GATEWAY}`, {
-        method: 'OPTIONS'
-      });
-      console.log('OPTIONS response:', response);
-      toast({
-        title: "Test Request Sent",
-        description: `Status: ${response.status} ${response.statusText}`,
-      });
-    } catch (error) {
-      console.error('Test request failed:', error);
-      toast({
-        title: "Test Failed",
-        description: "Failed to send OPTIONS request",
-        variant: "destructive",
-      });
-    }
   };
 
   const timeOptions = Array.from({ length: 48 }, (_, i) => {
@@ -198,7 +243,7 @@ const URLShortener = () => {
                   </PopoverTrigger>
                   <PopoverContent className="w-64">
                     <p className="text-sm">
-                      All expiration times are in Coordinated Universal Time (UTC). 
+                      All expiration times are in Coordinated Universal Time (UTC).
                       Please convert to your local time zone as needed.
                     </p>
                   </PopoverContent>
@@ -208,22 +253,23 @@ const URLShortener = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="flex-1 bg-purple-600 hover:bg-purple-700"
               disabled={loading}
             >
               {loading ? "Shortening..." : "Shorten URL"}
             </Button>
-            
-            <Button
+
+            {/* Test button */}
+            {/* <Button
               type="button"
               variant="outline"
               onClick={handleTest}
               className="px-4"
             >
               <TestTube className="w-4 h-4" />
-            </Button>
+            </Button> */}
           </div>
         </form>
 

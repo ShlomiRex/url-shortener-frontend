@@ -8,7 +8,9 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "s3upload": "aws s3 sync ./dist s3://tinyurl.shlomidom.com --delete",
+    "deploy": "npm run build && npm run s3upload"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
