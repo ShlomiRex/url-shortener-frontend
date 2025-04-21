@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Link, Clock, Info, TestTube, Mail } from "lucide-react";
+import { Link, Clock, Info, TestTube, Mail, Github } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,7 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEffect } from "react";
 
 const API_GATEWAY = "https://h3zlwgw9qa.execute-api.us-east-1.amazonaws.com/api"
 const DOMAIN = "https://tinyurl.shlomidom.com"
@@ -172,6 +171,15 @@ const URLShortener = () => {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">URL Shortener</h1>
           <p className="text-gray-600">Shorten your long URLs with ease</p>
+          <a 
+            href="https://github.com/ShlomiRex/url-shortener-frontend" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="inline-flex items-center mt-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <Github className="mr-2 h-5 w-5" />
+            View on GitHub
+          </a>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -311,7 +319,8 @@ const URLShortener = () => {
         <p className="text-sm">
           Created by <span className="font-semibold">Shlomi Domnenco</span>
         </p>
-        <div className="flex justify-center space-x-2 mt-2">
+        <p className="text-sm mb-2">Check out my professional portfolio</p>
+        <div className="flex justify-center space-x-2">
           <a 
             href="mailto:shlomidom@gmail.com" 
             className="hover:text-primary transition-colors"
@@ -325,7 +334,7 @@ const URLShortener = () => {
             rel="noopener noreferrer" 
             className="hover:text-primary transition-colors"
           >
-            <span className="sr-only">Website</span>
+            <span className="sr-only">Portfolio</span>
             <Link className="h-5 w-5" />
           </a>
         </div>
