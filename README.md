@@ -25,8 +25,6 @@ Install dependencies: `npm install`. Run: `npm run dev`. Deploy to S3: `npm run 
 
 The frontend is a simple React application that allows users to enter a URL and get a shortened URL. The frontend is built using React, TypeScript, and Tailwind CSS. The application is statically hosted on S3 bucket, called 'tinyurl.shlomidom.com'.
 
-I'll be honest, I used [Loveable](https://lovable.dev/) website to quickly generate a simple React app. I then edited it to match my needs.
-
 ## Database
 
 ![MySQL](README-assets/mysql.jpg)
