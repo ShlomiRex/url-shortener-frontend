@@ -69,10 +69,26 @@ const URLShortener = () => {
       await fetch(requestUri, {
         method: "POST"
       })
-        .then(res => res.json())
-        .then(data => {
-          console.log("Response:", data);
-          short_url = data.short_url;
+        .then(res => {
+          console.log("Response:", res);
+          if (res.status !== 200) {
+            throw new Error("Failed to shorten URL");
+          }
+          return res.json();
+        })
+        .then(res => {
+          res = JSON.parse(res);
+          const { statusCode, short_url } = res;
+          console.log("Status Code:", statusCode);
+          console.log("Short URL:", short_url);
+          if (statusCode != 200) {
+            toast({
+              title: "Error",
+              description: "Failed to shorten URL",
+              variant: "destructive",
+            });
+            return;
+          }
 
           setShortUrl(`${DOMAIN}/?u=${short_url}`);
 
